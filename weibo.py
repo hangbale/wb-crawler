@@ -1485,6 +1485,8 @@ class Weibo(object):
         self.mysql_create_table(mysql_config, create_table)
         weibo_list = []
         retweet_list = []
+        pic_list = []
+        video_list = []
         if len(self.write_mode) > 1:
             info_list = copy.deepcopy(self.weibo[wrote_count:])
         else:
@@ -1503,10 +1505,33 @@ class Weibo(object):
                 del w["retweet"]
             else:
                 w["retweet_id"] = ""
+            pic_item = {
+                "weibo_id": w["id"],
+                "user_id": w["user_id"]
+            }
+            video_item = {
+                "weibo_id": w["id"],
+                "user_id": w["user_id"]
+            }
+            # video_item = {}
+            # pic_item["weibo_id"] = w["id"]
+            # pic_item["user_id"] = w["user_id"]
+            # video_item["weibo_id"] = w["id"]
+            # video_item["user_id"] = w["user_id"]
+            if "pics" in w:
+                pic_item["url"] = w["pics"]
+                print(pic_item)
+                pic_list.append(pic_item)
+            if "video_url" in w:
+                video_item["url"] = w["video_url"]
+                print(video_item)
+                video_list.append(video_item)
             weibo_list.append(w)
         # 在'weibo'表中插入或更新微博数据
         self.mysql_insert(mysql_config, "weibo", retweet_list)
         self.mysql_insert(mysql_config, "weibo", weibo_list)
+        self.mysql_insert(mysql_config, "pics", pic_list)
+        self.mysql_insert(mysql_config, "videos", video_list)
         logger.info("%d条微博写入MySQL数据库完毕", self.got_count)
 
     def weibo_to_sqlite(self, wrote_count):

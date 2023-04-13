@@ -1,0 +1,5 @@
+{
+  "name": "newweibo",
+  "script": "python weibo.py",
+  "autorestart": false
+}
